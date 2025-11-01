@@ -1,6 +1,62 @@
 version: '3.8'
 
 services:
+    # ========================================
+    # NOUVEAU : Laravel Application
+    # ========================================
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: laravel-app
+        restart: unless-stopped
+        ports:
+            - "8000:80"
+        volumes:
+            - .:/var/www/html
+            - ./storage:/var/www/html/storage
+            - ./bootstrap/cache:/var/www/html/bootstrap/cache
+        environment:
+            - APP_NAME=Laravel
+            - APP_ENV=production
+            - APP_KEY=base64:zpTxBe7GDG5dMhteXbKpIFMHUYhS3NPknsHtTAoAWaI=
+            - APP_DEBUG=false
+            - DB_CONNECTION=pgsql
+            - DB_HOST=postgres
+            - DB_PORT=5432
+            - DB_DATABASE=api_project
+            - DB_USERNAME=postgres
+            - DB_PASSWORD=passer
+            - ELASTICSEARCH_HOSTS=["http://elasticsearch:9200"]
+            - ELASTICSEARCH_INDEX_PREFIX=gestion_projet
+            - JWT_SECRET=44NXttmfXW1cV9XH0zrclTWLPzInFmEqAsPGtV2TxUrOjh0OXeAea17AXBTThkOb
+        depends_on:
+            - postgres
+            - elasticsearch
+        networks:
+            - elastic
+
+    # ========================================
+    # NOUVEAU : PostgreSQL
+    # ========================================
+    postgres:
+        image: postgres:15-alpine
+        container_name: postgres
+        restart: unless-stopped
+        environment:
+            POSTGRES_DB: api_project
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: passer
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+        networks:
+            - elastic
+
+    # ========================================
+    # VOS SERVICES EXISTANTS (inchangés)
+    # ========================================
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
         container_name: elasticsearch
@@ -33,5 +89,7 @@ networks:
         driver: bridge
 
 volumes:
+    postgres-data:
+        driver: local
     elasticsearch-data:
         driver: local

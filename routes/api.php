@@ -28,7 +28,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 
     //USER
-    Route::apiResource('user', UserController::class)->middleware('auth:api');
+    Route::apiResource('user', UserController::class);
     Route::get('/users/available', [UserController::class, 'availableUsers'])->middleware('auth:api');
     Route::get('/users/available-for-project/{projectId}', [UserController::class, 'availableUsersForProject'])->middleware('auth:api');
 

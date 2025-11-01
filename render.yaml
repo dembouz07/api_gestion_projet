@@ -1,0 +1,44 @@
+services:
+  # Laravel Application
+  - type: web
+    name: laravel-app
+    env: docker
+    dockerfilePath: ./Dockerfile.render
+    envVars:
+      - key: APP_NAME
+        value: Laravel
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: postgres
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: postgres
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: postgres
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: postgres
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: postgres
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+
+databases:
+  - name: postgres
+    databaseName: api_project
+    user: postgres
